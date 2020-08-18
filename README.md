@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Superresolution using an efficient sub-pixel convolutional neural network
 
 This example illustrates how to use the efficient sub-pixel convolution layer described in  ["Real-Time Single Image and Video Super-Resolution Using an Efficient Sub-Pixel Convolutional Neural Network" - Shi et al.](https://arxiv.org/abs/1609.05158) for increasing spatial resolution within your network for tasks such as superresolution.
@@ -30,3 +31,14 @@ This example trains a super-resolution network on the [BSD300 dataset](https://w
 
 ### Super Resolve
 `python super_resolve.py --input_image dataset/BSDS300/images/test/16077.jpg --model model_epoch_500.pth --output_filename out.png`
+=======
+
+# Transformation Consistency Regularization- A Semi Supervised Paradigm for Image to Image Translation (ECCV'20)
+
+![Figure 1](7.jpg)
+
+This repository is an PyTorch implementation of the ECCV'20 paper [Transformation Consistency Regularization- A Semi Supervised Paradigm for Image to Image Translation](https://arxiv.org/abs/2007.07867).
+
+
+
+>>>>>>> 7cef35b16f52c5e2c206e4784f2ac87221d9ddbf
