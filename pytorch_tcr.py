@@ -28,7 +28,7 @@ class TCR(nn.Module):
 
 
 
-        self.max_z, self.min_z = 1.03, 0.97         # Change as per the task
+        self.max_z, self.min_z = 1.00, 1.00         # Change as per the task
 #
         
     def forward(self, img):
