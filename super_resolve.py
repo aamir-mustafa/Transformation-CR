@@ -8,21 +8,22 @@ import numpy as np
 
 # Training settings
 parser = argparse.ArgumentParser(description='PyTorch Super Res Example')
+parser.add_argument('--test_path', type=str, required=True, help='input test images to use')
 #parser.add_argument('--input_image', type=str, required=True, help='input image to use')
-#parser.add_argument('--model', type=str, required=True, help='model file to use')
-#parser.add_argument('--output_filename', type=str, help='where to save the output image')
+parser.add_argument('--model', type=str, required=True, help='model file to use')
+parser.add_argument('--output_folder', type=str, help='where to save the output image')
 parser.add_argument('--cuda', default= True, help='use cuda')
 opt = parser.parse_args()
 
 print(opt)
 
-model = torch.load('models/Elephant/Elephant_1percent_Supervised/model_epoch_1.pth')
+model = torch.load(opt.model)
 if opt.cuda:
     model = model.cuda()
     
 import os
 #test_path= 'dataset/BSD500/images/test'
-test_path= 'Reduced'
+test_path= opt.test_path
 test_images= os.listdir(test_path)
 
 for input_image in test_images:
@@ -51,6 +52,6 @@ for input_image in test_images:
     out_img = Image.merge('YCbCr', [out_img_y, out_img_cb, out_img_cr]).convert('RGB')
 
 #    print(input_image)
-    out_img.save('SISR/' + input_image)
+    out_img.save(opt.output_folder + '/' + input_image)
     
 print('output images saved')

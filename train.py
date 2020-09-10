@@ -27,6 +27,7 @@ parser.add_argument('--lr', type=float, default=0.001, help='Learning Rate. Defa
 parser.add_argument('--cuda', default=True, help='use cuda?')
 parser.add_argument('--threads', type=int, default=4, help='number of threads for data loader to use')
 parser.add_argument('--seed', type=int, default=123, help='random seed to use. Default=123')
+
 opt = parser.parse_args()
 
 print(opt)
@@ -84,7 +85,7 @@ def test():
 
 
 def checkpoint(epoch):
-    models_out_folder= 'models/Elephant_L1/Elephant_1percent_Supervised'
+    models_out_folder= 'models/TCR'
         
     if not os.path.exists(models_out_folder):
         os.makedirs(models_out_folder)
@@ -95,12 +96,12 @@ def checkpoint(epoch):
 
 def save_images():
 
-    model = torch.load('models/Elephant_L1/Elephant_1percent_Supervised/model_epoch_30.pth')
+    model = torch.load('models/TCR/model_epoch_30.pth')
     if opt.cuda:
         model = model.cuda()
         
     
-    test_path= 'dataset/Elephant/test'
+    test_path= 'dataset/BSD500/images/test'
     test_images= os.listdir(test_path)
     
     for input_image in test_images:
@@ -128,7 +129,7 @@ def save_images():
         out_img = Image.merge('YCbCr', [out_img_y, out_img_cb, out_img_cr]).convert('RGB')
     
     #    print(input_image)
-        output_folder= 'output/Elephant_L1/Supervised_1percent_Epoch30'
+        output_folder= 'output/TCR'
         
         if not os.path.exists(output_folder):
             os.makedirs(output_folder)

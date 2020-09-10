@@ -25,6 +25,19 @@ git clone https://github.com/aamir-mustafa/Tranformation-CR
 cd Tranformation-CR
 ```
 
+## Files
+
+``train.py`` -- For training the baseline/ fully-supervised model.
+
+``train_tcr.py`` -- For training the model alongside Transformation Consistency Regularization (TCR) with MSE Loss.
+
+``train_tcr_vgg_loss.py`` -- For training the model alongside Transformation Consistency Regularization (TCR) with VGG + MSE Loss.
+
+``train_augmentation.py`` -- For training the model with image augmentation.
+
+For details about each method, please refer to [our paper](https://arxiv.org/abs/2007.07867).
+
+
 ## Downloading the dataset 
 
 Download the [BSD500 dataset](https://www2.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/). For training the model, we use crops from the 400 training images, and evaluating on crops of the 100 test images. 
@@ -35,52 +48,32 @@ The downloaded test dataset lies in ``dataset/BSD500/images/test``
 
 A snapshot of the model after every epoch with filename model_epoch_<epoch_number>.pth
 
-## Files
-
-``train.py`` -- For training the baseline/ fully-supervised model.
-
-``train_tcr.py`` -- For training the model alonside Transformation Consistency Regularization (TCR) with MSE Loss.
-
-``train_tcr_vgg_loss.py`` -- For training the model alonside Transformation Consistency Regularization (TCR) with VGG + MSE Loss.
-
-``train_augmentation.py`` -- For training the model image augmentation.
-
-For details about each method, please refer to [our paper](https://arxiv.org/abs/2007.07867).
-
-# Superresolution using an efficient sub-pixel convolutional neural network
-
-This example illustrates how to use the efficient sub-pixel convolution layer described in  ["Real-Time Single Image and Video Super-Resolution Using an Efficient Sub-Pixel Convolutional Neural Network" - Shi et al.](https://arxiv.org/abs/1609.05158) for increasing spatial resolution within your network for tasks such as superresolution.
-
-```
-usage: train_tcr.py [-h] --upscale_factor UPSCALE_FACTOR [--batchSize BATCHSIZE]
-               [--testBatchSize TESTBATCHSIZE] [--nEpochs NEPOCHS] [--lr LR]
-               [--cuda] [--threads THREADS] [--seed SEED]
-
-PyTorch Super Res Example
-
-optional arguments:
-  -h, --help            show this help message and exit
-  --upscale_factor      super resolution upscale factor
-  --batchSize           training batch size
-  --testBatchSize       testing batch size
-  --nEpochs             number of epochs to train for
-  --lr                  Learning Rate. Default=0.01
-  --cuda                use cuda
-  --threads             number of threads for data loader to use Default=4
-  --seed                random seed to use. Default=123
-```
 
 ## Example Usage:
 
-### Train
+### Training
 
 `python train_tcr.py --upscale_factor 3 --batchSize 4 --testBatchSize 100 --nEpochs 30 --lr 0.001`
 
-### Super Resolve
-`python super_resolve.py --input_image dataset/BSDS300/images/test/16077.jpg --model model_epoch_500.pth --output_filename out.png`
-
+* The trained checkpoints will be saved in ``models/TCR`` folder.
+* Output Super-Resolved Images will be saved in ``output/TCR`` folder.
 
 ### Other Methods
 
-`python train_augmentaion.py` Training using our transformations as Data Augmentation
-`python train_tcr_vgg_loss.py` Training using our transformations alongisde the Perceptuall Loss
+`python train.py` Training using Full Supervision.
+
+`python train_augmentaion.py` Training using our transformations as Data Augmentation.
+
+`python train_tcr_vgg_loss.py` Training using our transformations alongisde the Perceptual Loss.
+
+* Checkpoints and the Output Images are saved in a similar fashion as above.
+
+
+### Testing on your own images
+
+You can run our trained model to Super-Resolve any set of images.
+
+`python super_resolve.py --test_path dataset_folder --model TCR/model_epoch_500.pth --output_folder SR_Images`
+
+
+
