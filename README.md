@@ -29,7 +29,8 @@ cd Tranformation-CR
 
 Download the [BSD500 dataset](https://www2.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/). For training the model, we use crops from the 400 training images, and evaluating on crops of the 100 test images. 
 
-The downloaded train dataset lies in ``dataset/BSD500/images/train``
+The downloaded train dataset lies in ``dataset/BSD500/images/train``.
+
 The downloaded test dataset lies in ``dataset/BSD500/images/test``
 
 A snapshot of the model after every epoch with filename model_epoch_<epoch_number>.pth
@@ -37,8 +38,11 @@ A snapshot of the model after every epoch with filename model_epoch_<epoch_numbe
 ## Files
 
 ``train.py`` -- For training the baseline/ fully-supervised model.
+
 ``train_tcr.py`` -- For training the model alonside Transformation Consistency Regularization (TCR) with MSE Loss.
+
 ``train_tcr_vgg_loss.py`` -- For training the model alonside Transformation Consistency Regularization (TCR) with VGG + MSE Loss.
+
 ``train_augmentation.py`` -- For training the model image augmentation.
 
 For details about each method, please refer to [our paper](https://arxiv.org/abs/2007.07867).
