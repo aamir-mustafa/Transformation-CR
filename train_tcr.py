@@ -1,3 +1,13 @@
+'''
+@author: Aamir Mustafa and Rafal K. Mantiuk
+Implementation of the paper:
+    Transformation Consistency Regularization- A Semi Supervised Paradigm for Image to Image Translation
+    ECCV 2020
+
+This file trains our method using only 20% of data as supervised data, rest is fed into the network in unsupervised fashion.
+'''
+
+
 from __future__ import print_function
 import argparse
 from math import log10
@@ -37,22 +47,25 @@ torch.manual_seed(opt.seed)
 
 device = torch.device("cuda" if opt.cuda else "cpu")
 
-data_dir= 'dataset/BSD500_10percent/images'
+# Only 20 % of the data is used in supervised fashion and the rest is fed in an unsupervised fashion
+data_dir= 'dataset/BSD500_20percent/images'   # Reduced Data used for training our method in a supervised fashion
 
 print('===> Loading datasets')
 train_set = get_training_set(data_dir, opt.upscale_factor)
+training_data_loader = DataLoader(dataset=train_set, num_workers=opt.threads, batch_size=opt.batchSize, shuffle=True)
 
+#Loading rest of the data that is fed only in the unsupervised TCR chain
 data_dir_whole= 'dataset/BSD500/images'
 train_set_whole = get_training_set(data_dir_whole, opt.upscale_factor)
-training_data_loader_un = DataLoader(dataset=train_set_whole, num_workers=opt.threads, batch_size=40, shuffle=True)
+training_data_loader_un = DataLoader(dataset=train_set_whole, num_workers=opt.threads, batch_size=40, shuffle=True) # The batch size for unsupervised data is more than supervised data
 
+
+#Loading the Test Set for Evaluation
 test_set = get_test_set(data_dir, opt.upscale_factor)
-training_data_loader = DataLoader(dataset=train_set, num_workers=opt.threads, batch_size=opt.batchSize, shuffle=True)
 testing_data_loader = DataLoader(dataset=test_set, num_workers=opt.threads, batch_size=opt.testBatchSize, shuffle=False)
 
 print('===> Building model')
 model = Net(upscale_factor=opt.upscale_factor).to(device)
-#criterion = nn.MSELoss()
 criterion_mse = nn.MSELoss()
 criterion = nn.L1Loss()
 optimizer = optim.Adam(model.parameters(), lr=opt.lr)
@@ -64,15 +77,19 @@ def train(epoch):
     for iteration, batch in enumerate(zip(training_data_loader, training_data_loader_un), 0):
         data_sup, data_un = batch[0] , batch[1] #.to(device), batch[1].to(device)
         
-        input, target = data_sup[0].to(device), data_sup[1].to(device)
+        input, target = data_sup[0].to(device), data_sup[1].to(device)   # Here the data is used in supervised fashion
         
-        input_un, target_un = data_un[0].to(device), data_un[1].to(device)
+        input_un, target_un = data_un[0].to(device), data_un[1].to(device)   # Here the labels are not used
         
+        
+        # Applying our TCR on the Unsupervised data
         hflipped_input= hflip(input_un)
         
         
 
         optimizer.zero_grad()
+        
+        #Calculating the Unsupervised Loss
         loss_ours= criterion(model(hflipped_input), hflip(model(input_un)))
 #        print('Our Loss is ', loss_ours)
         
@@ -103,7 +120,7 @@ def test():
 
 
 def checkpoint(epoch):
-    models_out_folder= 'models/L1/Supervised_10percent_UN'
+    models_out_folder= 'models/TCR'
         
     if not os.path.exists(models_out_folder):
         os.makedirs(models_out_folder)
@@ -114,7 +131,7 @@ def checkpoint(epoch):
 
 def save_images():
 
-    model = torch.load('models/L1/Supervised_10percent_UN/model_epoch_30.pth')
+    model = torch.load('models/TCR/model_epoch_30.pth')
     if opt.cuda:
         model = model.cuda()
         
@@ -147,7 +164,7 @@ def save_images():
         out_img = Image.merge('YCbCr', [out_img_y, out_img_cb, out_img_cr]).convert('RGB')
     
     #    print(input_image)
-        output_folder= 'output/L1/Supervised_10percent_UN'
+        output_folder= 'output/TCR'
         
         if not os.path.exists(output_folder):
             os.makedirs(output_folder)

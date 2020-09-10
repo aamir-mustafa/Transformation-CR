@@ -1,3 +1,13 @@
+
+'''
+@author: Aamir Mustafa and Rafal K. Mantiuk
+Implementation of the paper:
+    Transformation Consistency Regularization- A Semi Supervised Paradigm for Image to Image Translation
+    ECCV 2020
+
+This file trains a baseline model using full supervision.
+'''
+
 from __future__ import print_function
 import argparse
 from math import log10
@@ -22,7 +32,7 @@ parser = argparse.ArgumentParser(description='PyTorch Super Res Example')
 parser.add_argument('--upscale_factor', type=int, default=3, help="super resolution upscale factor")
 parser.add_argument('--batchSize', type=int, default=4, help='training batch size')
 parser.add_argument('--testBatchSize', type=int, default=100, help='testing batch size')
-parser.add_argument('--nEpochs', type=int, default=30, help='number of epochs to train for')
+parser.add_argument('--nEpochs', type=int, default=500, help='number of epochs to train for')
 parser.add_argument('--lr', type=float, default=0.001, help='Learning Rate. Default=0.01')
 parser.add_argument('--cuda', default=True, help='use cuda?')
 parser.add_argument('--threads', type=int, default=4, help='number of threads for data loader to use')
@@ -85,7 +95,7 @@ def test():
 
 
 def checkpoint(epoch):
-    models_out_folder= 'models/TCR'
+    models_out_folder= 'models/Baseline'
         
     if not os.path.exists(models_out_folder):
         os.makedirs(models_out_folder)
@@ -96,7 +106,7 @@ def checkpoint(epoch):
 
 def save_images():
 
-    model = torch.load('models/TCR/model_epoch_30.pth')
+    model = torch.load('models/Baseline/model_epoch_500.pth')
     if opt.cuda:
         model = model.cuda()
         
@@ -129,7 +139,7 @@ def save_images():
         out_img = Image.merge('YCbCr', [out_img_y, out_img_cb, out_img_cr]).convert('RGB')
     
     #    print(input_image)
-        output_folder= 'output/TCR'
+        output_folder= 'output/Baseline'
         
         if not os.path.exists(output_folder):
             os.makedirs(output_folder)

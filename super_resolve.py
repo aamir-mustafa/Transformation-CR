@@ -1,3 +1,13 @@
+'''
+@author: Aamir Mustafa and Rafal K. Mantiuk
+Implementation of the paper:
+    Transformation Consistency Regularization- A Semi Supervised Paradigm for Image to Image Translation
+    ECCV 2020
+
+'''
+
+
+
 from __future__ import print_function
 import argparse
 import torch

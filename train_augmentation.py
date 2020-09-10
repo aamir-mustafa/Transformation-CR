@@ -1,3 +1,13 @@
+'''
+@author: Aamir Mustafa and Rafal K. Mantiuk
+Implementation of the paper:
+    Transformation Consistency Regularization- A Semi Supervised Paradigm for Image to Image Translation
+    ECCV 2020
+
+This file trains our transformations proposed in TCR as Image Augmentations to train the network. The main difference here is that the ground truth images are also 
+transformed.
+'''
+
 from __future__ import print_function
 import argparse
 from math import log10
@@ -58,6 +68,8 @@ def train(epoch):
     epoch_loss = 0
     for iteration, batch in enumerate(training_data_loader, 1):
         input, target = batch[0].to(device), batch[1].to(device)
+        #Applying the transformation as Imaeg augmentations for training
+        #Here the output ground truth image is also transformed
         
         input_hflip , target_hflip = hflip(input), hflip(target)
         
@@ -89,7 +101,7 @@ def test():
 
 
 def checkpoint(epoch):
-    models_out_folder= 'models/Augmentation/50percent'
+    models_out_folder= 'models/Augmentation'
         
     if not os.path.exists(models_out_folder):
         os.makedirs(models_out_folder)
@@ -100,12 +112,12 @@ def checkpoint(epoch):
 
 def save_images():
 
-    model = torch.load('models/Augmentation/50percent/model_epoch_30.pth')
+    model = torch.load('models/Augmentation/model_epoch_30.pth')
     if opt.cuda:
         model = model.cuda()
         
     
-    test_path= 'dataset/BSD500_50percent/images/test'
+    test_path= 'dataset/BSD500/images/test'
     test_images= os.listdir(test_path)
     
     for input_image in test_images:
@@ -133,7 +145,7 @@ def save_images():
         out_img = Image.merge('YCbCr', [out_img_y, out_img_cb, out_img_cr]).convert('RGB')
     
     #    print(input_image)
-        output_folder= 'output/Augmentation/50percent'
+        output_folder= 'output/Augmentation'
         
         if not os.path.exists(output_folder):
             os.makedirs(output_folder)

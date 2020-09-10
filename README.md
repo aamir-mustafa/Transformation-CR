@@ -27,7 +27,7 @@ cd Tranformation-CR
 
 ## Files
 
-``train.py`` -- For training the baseline/ fully-supervised model.
+``train.py`` -- For training the baseline model.
 
 ``train_tcr.py`` -- For training the model alongside Transformation Consistency Regularization (TCR) with MSE Loss.
 
@@ -46,21 +46,21 @@ The downloaded train dataset lies in ``dataset/BSD500/images/train``.
 
 The downloaded test dataset lies in ``dataset/BSD500/images/test``
 
-A snapshot of the model after every epoch with filename model_epoch_<epoch_number>.pth
+
 
 
 ## Example Usage:
 
 ### Training
 
-`python train_tcr.py --upscale_factor 3 --batchSize 4 --testBatchSize 100 --nEpochs 30 --lr 0.001`
+`python train_tcr.py --upscale_factor 3 --batchSize 4 --testBatchSize 100 --nEpochs 500 --lr 0.001`
 
 * The trained checkpoints will be saved in ``models/TCR`` folder.
 * Output Super-Resolved Images will be saved in ``output/TCR`` folder.
 
 ### Other Methods
 
-`python train.py` Training using Full Supervision.
+`python train.py` Training using baseline model.
 
 `python train_augmentaion.py` Training using our transformations as Data Augmentation.
 
