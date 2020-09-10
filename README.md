@@ -5,9 +5,43 @@
 
 This repository is an PyTorch implementation of the ECCV'20 paper [Transformation Consistency Regularization- A Semi Supervised Paradigm for Image to Image Translation](https://arxiv.org/abs/2007.07867).
 
-Implementation for Movie Applications --- Coming Soon
+In this work, we propose Transformation Consistency Regularization (TCR), as a Semi-Supervised Learning Method for Image-to-Image Translation. The method introduces a set of geometric transformations and enforces the model's predictions for unlabeled data to be invarient to these transformations. The above figure shows an illustrative example of the working of our method for the task of Image Colorization.
+
+To this end, our method only requires around 10-20 % of the labeled data to achieve similar reconstructions to its fully-supervised counterpart.
+
+We provide scripts to reproduce the results of our paper.
+
+## Dependencies
+
+* Python 3.6
+* Pytorch >= 0.4.0
+* Kornia
 
 
+## Clone the repository
+Clone this repository into any place you want.
+```bash
+git clone https://github.com/aamir-mustafa/Tranformation-CR
+cd Tranformation-CR
+```
+
+## Downloading the dataset 
+
+Download the [BSD500 dataset](https://www2.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/). For training the model, we use crops from the 400 training images, and evaluating on crops of the 100 test images. 
+
+The downloaded train dataset lies in ``dataset/BSD500/images/train``
+The downloaded test dataset lies in ``dataset/BSD500/images/test``
+
+A snapshot of the model after every epoch with filename model_epoch_<epoch_number>.pth
+
+## Files
+
+``train.py`` -- For training the baseline/ fully-supervised model.
+``train_tcr.py`` -- For training the model alonside Transformation Consistency Regularization (TCR) with MSE Loss.
+``train_tcr_vgg_loss.py`` -- For training the model alonside Transformation Consistency Regularization (TCR) with VGG + MSE Loss.
+``train_augmentation.py`` -- For training the model image augmentation.
+
+For details about each method, please refer to [our paper](https://arxiv.org/abs/2007.07867).
 
 # Superresolution using an efficient sub-pixel convolutional neural network
 
@@ -31,7 +65,6 @@ optional arguments:
   --threads             number of threads for data loader to use Default=4
   --seed                random seed to use. Default=123
 ```
-This example trains a super-resolution network on the [BSD300 dataset](https://www2.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/), using crops from the 200 training images, and evaluating on crops of the 100 test images. A snapshot of the model after every epoch with filename model_epoch_<epoch_number>.pth
 
 ## Example Usage:
 
