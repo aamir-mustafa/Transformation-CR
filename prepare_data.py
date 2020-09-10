@@ -36,6 +36,4 @@ for input_image in test_images:
         img3.save('NN/' + input_image)          
 #%%
 
-        
-        
-        
+

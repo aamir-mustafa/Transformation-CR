@@ -11,7 +11,7 @@ In this file we show that our method works fine for VGG Perceptual Loss as well.
 from __future__ import print_function
 import argparse
 from math import log10
-
+from pytorch_tcr import TCR
 from PIL import Image
 from torchvision.transforms import ToTensor
 import os
@@ -23,7 +23,7 @@ from model import Net
 from data import get_training_set, get_test_set
 import numpy as np
 import torchvision.models as models
-
+tcr=TCR()
 vgg = models.vgg16(pretrained=True)
 loss_network = nn.Sequential(*list(vgg.features)[:31]).eval()
 for param in loss_network.parameters():
@@ -44,7 +44,7 @@ parser = argparse.ArgumentParser(description='PyTorch Super Res Example')
 parser.add_argument('--upscale_factor', type=int, default=3, help="super resolution upscale factor")
 parser.add_argument('--batchSize', type=int, default=4, help='training batch size')
 parser.add_argument('--testBatchSize', type=int, default=100, help='testing batch size')
-parser.add_argument('--nEpochs', type=int, default=30, help='number of epochs to train for')
+parser.add_argument('--nEpochs', type=int, default=500, help='number of epochs to train for')
 parser.add_argument('--lr', type=float, default=0.001, help='Learning Rate. Default=0.01')
 parser.add_argument('--cuda', default=True, help='use cuda?')
 parser.add_argument('--threads', type=int, default=4, help='number of threads for data loader to use')
@@ -97,7 +97,7 @@ def train(epoch):
         input_un, target_un = data_un[0].to(device), data_un[1].to(device)   # Here the labels are not used
 
         # Applying our TCR on the Unsupervised data
-        hflipped_input= hflip(input_un)
+        transformed_input= tcr(input_un)
         
 #        hflipped_input= hflip(input_un)
 #        print ('input_un.shape', input_un.shape)    #40, 1, 85, 85
@@ -106,11 +106,11 @@ def train(epoch):
         
 
         optimizer.zero_grad()
-        output_hflipped= model(hflipped_input)
-        input_model_hflip= hflip(model(input_un))
+        output_transformed= model(transformed_input)
+        input_model_transformed= tcr(model(input_un))
         
-        loss_ours= perception_loss(torch.cat((output_hflipped,output_hflipped,output_hflipped),1), 
-                                   torch.cat((input_model_hflip,input_model_hflip,input_model_hflip),1))
+        loss_ours= perception_loss(torch.cat((output_transformed,output_transformed,output_transformed),1), 
+                                   torch.cat((input_model_transformed,input_model_transformed,input_model_transformed),1))
 #        print('Our Loss is ', loss_ours)
         
 #        output= model(input)
@@ -155,7 +155,7 @@ def checkpoint(epoch):
 
 def save_images():
 
-    model = torch.load('models/Perception/model_epoch_30.pth')
+    model = torch.load('models/Perception/model_epoch_500.pth')
     if opt.cuda:
         model = model.cuda()
         

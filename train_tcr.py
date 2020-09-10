@@ -22,16 +22,19 @@ from torch.utils.data import DataLoader
 from model import Net
 from data import get_training_set, get_test_set
 import numpy as np
+from pytorch_tcr import TCR   # Our file for generating the Transformation Matrix
 
 def hflip(input: torch.Tensor) -> torch.Tensor:
   return torch.flip(input, [-1])
+
+tcr=TCR()  
 
 # Training settings
 parser = argparse.ArgumentParser(description='PyTorch Super Res Example')
 parser.add_argument('--upscale_factor', type=int, default=3, help="super resolution upscale factor")
 parser.add_argument('--batchSize', type=int, default=4, help='training batch size')
 parser.add_argument('--testBatchSize', type=int, default=100, help='testing batch size')
-parser.add_argument('--nEpochs', type=int, default=30, help='number of epochs to train for')
+parser.add_argument('--nEpochs', type=int, default=500, help='number of epochs to train for')
 parser.add_argument('--lr', type=float, default=0.001, help='Learning Rate. Default=0.01')
 parser.add_argument('--cuda', default=True, help='use cuda?')
 parser.add_argument('--threads', type=int, default=4, help='number of threads for data loader to use')
@@ -81,16 +84,15 @@ def train(epoch):
         
         input_un, target_un = data_un[0].to(device), data_un[1].to(device)   # Here the labels are not used
         
-        
         # Applying our TCR on the Unsupervised data
-        hflipped_input= hflip(input_un)
-        
-        
+        transformed_input= tcr(input_un)
 
+
+        
         optimizer.zero_grad()
         
         #Calculating the Unsupervised Loss
-        loss_ours= criterion(model(hflipped_input), hflip(model(input_un)))
+        loss_ours= criterion(model(transformed_input), tcr(model(input_un)))
 #        print('Our Loss is ', loss_ours)
         
         loss = criterion(model(input), target)
@@ -131,7 +133,7 @@ def checkpoint(epoch):
 
 def save_images():
 
-    model = torch.load('models/TCR/model_epoch_30.pth')
+    model = torch.load('models/TCR/model_epoch_500.pth')
     if opt.cuda:
         model = model.cuda()
         

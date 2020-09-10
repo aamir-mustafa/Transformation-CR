@@ -106,7 +106,7 @@ def checkpoint(epoch):
 
 def save_images():
 
-    model = torch.load('models/Baseline/model_epoch_500.pth')
+    model = torch.load('models/Baseline/model_epoch_30.pth')
     if opt.cuda:
         model = model.cuda()
         

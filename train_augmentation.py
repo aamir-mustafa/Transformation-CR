@@ -22,7 +22,8 @@ from torch.utils.data import DataLoader
 from model import Net
 from data import get_training_set, get_test_set
 import numpy as np
-
+from pytorch_tcr import TCR
+tcr= TCR()
 def hflip(input: torch.Tensor) -> torch.Tensor:
   return torch.flip(input, [-1])
 
@@ -32,7 +33,7 @@ parser = argparse.ArgumentParser(description='PyTorch Super Res Example')
 parser.add_argument('--upscale_factor', type=int, default=3, help="super resolution upscale factor")
 parser.add_argument('--batchSize', type=int, default=4, help='training batch size')
 parser.add_argument('--testBatchSize', type=int, default=100, help='testing batch size')
-parser.add_argument('--nEpochs', type=int, default=30, help='number of epochs to train for')
+parser.add_argument('--nEpochs', type=int, default=500, help='number of epochs to train for')
 parser.add_argument('--lr', type=float, default=0.001, help='Learning Rate. Default=0.01')
 parser.add_argument('--cuda', default=True, help='use cuda?')
 parser.add_argument('--threads', type=int, default=4, help='number of threads for data loader to use')
@@ -71,12 +72,12 @@ def train(epoch):
         #Applying the transformation as Imaeg augmentations for training
         #Here the output ground truth image is also transformed
         
-        input_hflip , target_hflip = hflip(input), hflip(target)
+        input_tcr , target_tcr = tcr(input), tcr(target)
         
         
 
         optimizer.zero_grad()
-        loss = criterion(model(input), target) + criterion(model(input_hflip), target_hflip)
+        loss = criterion(model(input), target) + criterion(model(input_tcr), target_tcr)
         
         epoch_loss += loss.item()
         loss.backward()
