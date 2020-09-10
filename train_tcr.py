@@ -73,7 +73,7 @@ criterion_mse = nn.MSELoss()
 criterion = nn.L1Loss()
 optimizer = optim.Adam(model.parameters(), lr=opt.lr)
 
-    
+weight= 0.01    
 
 def train(epoch):
     epoch_loss = 0
@@ -96,7 +96,7 @@ def train(epoch):
 #        print('Our Loss is ', loss_ours)
         
         loss = criterion(model(input), target)
-        total_loss= loss + loss_ours
+        total_loss= loss + weight*loss_ours
         
 #        print('MSE Loss is ', total_loss)
         epoch_loss += total_loss.item()
