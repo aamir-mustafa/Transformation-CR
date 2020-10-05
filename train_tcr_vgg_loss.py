@@ -86,7 +86,7 @@ criterion_mse = nn.MSELoss()
 optimizer = optim.Adam(model.parameters(), lr=opt.lr)
 
 loss_network= loss_network.to(device)   # Pretrained VGG Network as a perceptual loss function.
-
+weight= 0.01
 def train(epoch):
     epoch_loss = 0
     for iteration, batch in enumerate(zip(training_data_loader, training_data_loader_un), 0):
@@ -97,7 +97,11 @@ def train(epoch):
         input_un, target_un = data_un[0].to(device), data_un[1].to(device)   # Here the labels are not used
 
         # Applying our TCR on the Unsupervised data
-        transformed_input= tcr(input_un)
+
+
+        bs=  input_un.shape[0]
+        random=torch.rand((bs, 1))
+        transformed_input= tcr(input_un,random)
         
 #        hflipped_input= hflip(input_un)
 #        print ('input_un.shape', input_un.shape)    #40, 1, 85, 85
@@ -107,7 +111,7 @@ def train(epoch):
 
         optimizer.zero_grad()
         output_transformed= model(transformed_input)
-        input_model_transformed= tcr(model(input_un))
+        input_model_transformed= tcr(model(input_un),random)
         
         loss_ours= perception_loss(torch.cat((output_transformed,output_transformed,output_transformed),1), 
                                    torch.cat((input_model_transformed,input_model_transformed,input_model_transformed),1))
@@ -118,7 +122,7 @@ def train(epoch):
 #                                   torch.cat((target,target,target),1))
         loss =criterion_mse(model(input), target)
 #        print ('target.shape', target.shape)
-        total_loss= loss + 0.01*loss_ours
+        total_loss= loss + weight*loss_ours
         
 #        print('MSE Loss is ', total_loss)
         epoch_loss += total_loss.item()

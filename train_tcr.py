@@ -85,14 +85,16 @@ def train(epoch):
         input_un, target_un = data_un[0].to(device), data_un[1].to(device)   # Here the labels are not used
         
         # Applying our TCR on the Unsupervised data
-        transformed_input= tcr(input_un)
+        bs=  input_un.shape[0]
+        random=torch.rand((bs, 1))
+        transformed_input= tcr(input_un,random)
 
 
         
         optimizer.zero_grad()
         
         #Calculating the Unsupervised Loss
-        loss_ours= criterion(model(transformed_input), tcr(model(input_un)))
+        loss_ours= criterion(model(transformed_input), tcr(model(input_un),random))
 #        print('Our Loss is ', loss_ours)
         
         loss = criterion(model(input), target)

@@ -23,30 +23,30 @@ class TCR(nn.Module):
 
         self.ang = np.deg2rad(20.0)    # Change the degree of rotation as per the task in hand 
         self.ang_neg= -1*self.ang
-        self.max_tx, self.max_ty =2.0, 2.0      # Change as per the task
-        self.min_tx, self.min_ty = -2.0, -2.0      # Change as per the task
+        self.max_tx, self.max_ty =6.0, 6.0      # Change as per the task
+        self.min_tx, self.min_ty = -6.0, -6.0      # Change as per the task
 
 
 
         self.max_z, self.min_z = 1.00, 1.00         # Change as per the task
 #
         
-    def forward(self, img):
+    def forward(self, img, random):
 #        print('img.shape is', img.shape)
         bs= img.shape[0]
 #        print('bs is', bs)
         W= img.shape[2]
         H= img.shape[3]
         
-        tx = ((self.max_tx - self.min_tx)*torch.rand((bs, 1))  + self.min_tx).to('cuda') 
-        ty = ((self.max_ty -self. min_ty)*torch.rand((bs, 1))  + self.min_ty).to('cuda') 
+        tx = ((self.max_tx - self.min_tx)*random  + self.min_tx).to('cuda') 
+        ty = ((self.max_ty -self. min_ty)*random + self.min_ty).to('cuda') 
 
 
-        r = ((self.ang - self.ang_neg)*torch.rand((bs, 1))  + self.ang_neg).to('cuda') 
-        z = ((self.max_z - self.min_z)*torch.rand((bs, 1))  + self.min_z).to('cuda')    
+        r = ((self.ang - self.ang_neg)*random  + self.ang_neg).to('cuda') 
+        z = ((self.max_z - self.min_z)*random + self.min_z).to('cuda')    
         
-        hx = ((self.ang - self.ang_neg)*torch.rand((bs, 1))  + self.ang_neg).to('cuda') 
-        hy = ((self.ang - self.ang_neg)*torch.rand((bs, 1))  + self.ang_neg).to('cuda') 
+        hx = ((self.ang - self.ang_neg)*random  + self.ang_neg).to('cuda') 
+        hy = ((self.ang - self.ang_neg)*random  + self.ang_neg).to('cuda') 
         
         # Transformation Matrix
 
