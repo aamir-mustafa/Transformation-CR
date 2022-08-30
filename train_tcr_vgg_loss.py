@@ -111,7 +111,7 @@ def train(epoch):
 
         optimizer.zero_grad()
         output_transformed= model(transformed_input)
-        input_model_transformed= tcr(model(input_un),random)
+        input_model_transformed= tcr(model(input_un),random, device)
         
         loss_ours= perception_loss(torch.cat((output_transformed,output_transformed,output_transformed),1), 
                                    torch.cat((input_model_transformed,input_model_transformed,input_model_transformed),1))

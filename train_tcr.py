@@ -87,7 +87,7 @@ def train(epoch):
         # Applying our TCR on the Unsupervised data
         bs=  input_un.shape[0]
         random=torch.rand((bs, 1))
-        transformed_input= tcr(input_un,random)
+        transformed_input= tcr(input_un,random, device)
 
 
         

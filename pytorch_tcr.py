@@ -31,22 +31,22 @@ class TCR(nn.Module):
         self.max_z, self.min_z = 1.00, 1.00         # Change as per the task
 #
         
-    def forward(self, img, random):
+    def forward(self, img, random, device):
 #        print('img.shape is', img.shape)
         bs= img.shape[0]
 #        print('bs is', bs)
         W= img.shape[2]
         H= img.shape[3]
         
-        tx = ((self.max_tx - self.min_tx)*random  + self.min_tx).to('cuda') 
-        ty = ((self.max_ty -self. min_ty)*random + self.min_ty).to('cuda') 
+        tx = ((self.max_tx - self.min_tx)*random  + self.min_tx).to(device) 
+        ty = ((self.max_ty -self. min_ty)*random + self.min_ty).to(device) 
 
 
-        r = ((self.ang - self.ang_neg)*random  + self.ang_neg).to('cuda') 
-        z = ((self.max_z - self.min_z)*random + self.min_z).to('cuda')    
+        r = ((self.ang - self.ang_neg)*random  + self.ang_neg).to(device) 
+        z = ((self.max_z - self.min_z)*random + self.min_z).to(device)    
         
-        hx = ((self.ang - self.ang_neg)*random  + self.ang_neg).to('cuda') 
-        hy = ((self.ang - self.ang_neg)*random  + self.ang_neg).to('cuda') 
+        hx = ((self.ang - self.ang_neg)*random  + self.ang_neg).to(device) 
+        hy = ((self.ang - self.ang_neg)*random  + self.ang_neg).to(device) 
         
         # Transformation Matrix
 
@@ -65,13 +65,13 @@ class TCR(nn.Module):
 
         T23 = torch.div( H*torch.cos(hy) - W*z*torch.cos(b) +2*ty*z*torch.cos(b) - W*z*torch.sin(b) + 2*tx*z*torch.sin(b) ,  2*torch.cos(hy))
 
-        T=torch.zeros((bs,2,3)).to('cuda')   #Combined for batch
+        T=torch.zeros((bs,2,3)).to(device)   #Combined for batch
 
 
         for i in range(bs):
             T[i]= torch.tensor([[T11[i], T12[i], T13[i]], [T21[i], T22[i], T23[i]]])   # Transformation Matrix for a batch
             
-        Transformed_img = kornia.warp_affine(img, T, dsize=(W, H)).to('cuda')    
+        Transformed_img = kornia.warp_affine(img, T, dsize=(W, H)).to(device)    
 
 
 
