@@ -27,6 +27,10 @@ cd Tranformation-CR
 
 ## Files
 
+``compute_tcr_loss.py`` -- Directly compute the TCR loss for the unsupervised data based on the model.
+
+``pytorch_tcr.py`` -- Transform a given batch of images.
+
 ``train.py`` -- For training the baseline model.
 
 ``train_tcr.py`` -- For training the model alongside Transformation Consistency Regularization (TCR) with MSE Loss.
