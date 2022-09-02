@@ -21,7 +21,7 @@ max_zoom -- maximum amount of zooming. This value can vary based on the img2img 
 Please make sure that for img2img translation tasks like Super-Resolution (where the input and output are of different resolutions), 
 we need to scale the transformation matrix based on the super-resolution factor of the model.
 
-The output of the function is the computed loss function
+The output of the function is the computed TCR loss.
 """
 
 #pip install kornia
