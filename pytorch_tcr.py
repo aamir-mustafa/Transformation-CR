@@ -71,8 +71,8 @@ class TCR(nn.Module):
         for i in range(bs):
             T[i]= torch.tensor([[T11[i], T12[i], T13[i]], [T21[i], T22[i], T23[i]]])   # Transformation Matrix for a batch
             
-        Transformed_img = kornia.warp_affine(img, T, dsize=(W, H)).to(device)    
-
+        # Transformed_img = kornia.warp_affine(img, T, dsize=(W, H)).to(device)    
+        Transformed_img = kornia.geometry.transform.warp_affine(img, T, dsize=(W, H)).to(device) 
 
 
         return Transformed_img
