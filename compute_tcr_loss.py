@@ -40,10 +40,7 @@ class TCR_Loss(nn.Module):
 #        print('img.shape is', img.shape)
         bs= img.shape[0]
         device= img.device
-        random_rotation=torch.rand((bs, 1)) 
-        random_translation_x=torch.rand((bs, 1)) 
-        random_translation_y=torch.rand((bs, 1)) 
-        random_translation_z=torch.rand((bs, 1))
+
         ang= np.deg2rad(max_rotation)
         ang_neg = -1*ang
         max_tx =max_translation_x
@@ -55,15 +52,15 @@ class TCR_Loss(nn.Module):
         W= img.shape[2]
         H= img.shape[3]
         
-        tx = ((max_tx - min_tx)*random_translation_x  + min_tx).to(device) 
-        ty = ((max_ty - min_ty)*random_translation_y + min_ty).to(device) 
+        tx = ((max_tx - min_tx)*torch.rand((bs, 1))  + min_tx).to(device) 
+        ty = ((max_ty - min_ty)*torch.rand((bs, 1)) + min_ty).to(device) 
 
 
-        r = ((ang - ang_neg)*random_rotation  + ang_neg).to(device) 
-        z = ((max_z - min_z)*random_translation_z + min_z).to(device)    
+        r = ((ang - ang_neg)*torch.rand((bs, 1))  + ang_neg).to(device) 
+        z = ((max_z - min_z)*torch.rand((bs, 1)) + min_z).to(device)    
         
-        hx = ((ang - ang_neg)*random_rotation  + ang_neg).to(device) 
-        hy = ((ang - ang_neg)*random_rotation  + ang_neg).to(device) 
+        hx = ((ang - ang_neg)*torch.rand((bs, 1))  + ang_neg).to(device) 
+        hy = ((ang - ang_neg)*torch.rand((bs, 1))  + ang_neg).to(device) 
         
         # Transformation Matrix
 
