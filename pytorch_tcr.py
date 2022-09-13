@@ -16,6 +16,7 @@ import torch
 import numpy as np
 import kornia
 import torch.nn as nn
+import math 
 
 class TCR(nn.Module):
     def __init__(self):
@@ -77,4 +78,75 @@ class TCR(nn.Module):
 
         return Transformed_img
     
+
+
+def trans_mat( tx, ty, device ) -> torch.Tensor:
+    return torch.tensor( [ [1, 0, tx], [0, 1, ty], [0, 0, 1] ], device=device )
+
+
     
+class Transformation(torch.nn.Module):
+
+    def __init__(self, max_translation_x=1.0, max_translation_y=1.0, max_rotation=10.0, max_scaling=10.0):
+        """
+        :max_translation_x - the maximum translation along x (+/- pixels in the input image)
+        :max_translation_y - the maximum translation  along y (+/- pixels in the input image)
+        :max_rotation - the maximum rotation in degrees (+/- the given angle)
+        :max_scaling - the maximum scaling in percentage. For example, 10 means that image can be enlarged or made smaller by 10%. 
+        """
+        super(Transformation, self).__init__()
+        self.max_translation_x = max_translation_x
+        self.max_translation_y = max_translation_y
+        self.max_rotation_rad = math.radians(max_rotation)
+        self.max_scaling = max_scaling
+        
+    def forward(self, input):
+
+        input_img = input#self.data_coder.input2img(input)
+        B, C, W_in, H_in = input_img.shape
+
+#        output = self.model(input)
+#        output_img = self.data_coder.output2img(output)
+#        _, _, W_out, H_out = output_img.shape        
+
+        device = input_img.device
+        max_v = torch.tensor( [[self.max_rotation_rad, self.max_translation_x, self.max_translation_y, 1]], device=device )
+        random_par = torch.rand((B, 4), device=device) * 2*max_v - max_v
+        r = random_par[:,0]
+        tx = random_par[:,1]
+        ty = random_par[:,2]
+        s = torch.exp(random_par[:,3]*math.log(self.max_scaling/100+1)) # Scaling is randomized on the log scale
+
+        #T_trans_center_in = torch.tensor( [[1, 0, W_in/2], [0, 1, H_in/2], [0, 0, 1]], device=device )
+
+        # Transformation matrix 
+        T11 = (s*torch.cos(r)).view(B,1,1)
+        T12 = (-s*torch.sin(r)).view(B,1,1)
+        T13 = tx.view(B,1,1)
+        T21 = (s*torch.sin(r)).view(B,1,1)
+        T22 = (s*torch.cos(r)).view(B,1,1)
+        T23 = ty.view(B,1,1)
+        TZ = torch.zeros( [B,1,1], device=device)
+        TO = torch.ones( [B,1,1], device=device)
+        T_trans_in = torch.cat( [torch.cat( [T11, T12, T13], dim=2 ), torch.cat( [T21, T22, T23], dim=2 ), torch.cat( [TZ, TZ, TO], dim=2 )], dim=1 )
+
+#        T13 = tx.view(B,1,1)*(W_out/W_in)
+#        T23 = ty.view(B,1,1)*(H_out/H_in)
+#        T_trans_out = torch.cat( [torch.cat( [T11, T12, T13], dim=2 ), torch.cat( [T21, T22, T23], dim=2 ), torch.cat( [TZ, TZ, TO], dim=2 )], dim=1 )
+
+        # T = torch.zeros((B,2,3)).to(device)   #Combined for batch
+
+        T_in = torch.matmul( trans_mat(W_in/2,H_in/2,device=device), torch.matmul( T_trans_in, trans_mat(-W_in/2,-H_in/2,device=device) ) )
+#        T_out = torch.matmul( trans_mat(W_out/2,H_out/2,device=device), torch.matmul( T_trans_out, trans_mat(-W_out/2,-H_out/2,device=device) ) )
+            
+        transformed_input_img = kornia.geometry.transform.warp_affine(input_img, T_in[:,0:2,:], dsize=(W_in, H_in)) 
+        
+        
+#        transformed_input = self.data_coder.img2input(input,transformed_input_img)
+#
+#        transformed_output_img = kornia.geometry.transform.warp_affine(output_img, T_out[:,0:2,:], dsize=(W_out, H_out)) 
+#        transformed_output = self.data_coder.img2output(output, transformed_output_img)
+#
+#        loss_tcr = self.criterion( self.model(transformed_input), transformed_output )
+
+        return transformed_input_img

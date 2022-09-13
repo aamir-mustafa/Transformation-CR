@@ -22,12 +22,12 @@ from torch.utils.data import DataLoader
 from model import Net
 from data import get_training_set, get_test_set
 import numpy as np
-from pytorch_tcr import TCR   # Our file for generating the Transformation Matrix
+from pytorch_tcr import *   # Our file for generating the Transformation Matrix
 
 def hflip(input: torch.Tensor) -> torch.Tensor:
   return torch.flip(input, [-1])
 
-tcr=TCR()  
+tcr=Transformation()  
 
 # Training settings
 parser = argparse.ArgumentParser(description='PyTorch Super Res Example')
